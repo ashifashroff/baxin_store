@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'shop-default' => 'default',
+    'shop-default' => 'baxin-modern',
 
     'shop' => [
         'default' => [
