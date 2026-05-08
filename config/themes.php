@@ -25,6 +25,17 @@ return [
                 'package_assets_directory' => 'resources/assets',
             ],
         ],
+
+        'baxin-modern' => [
+            'name' => 'Baxin Modern',
+            'assets_path' => 'public/themes/baxin-modern/assets',
+            'views_path' => 'packages/baxin-store/baxin-modern/resources/views',
+            'vite' => [
+                'hot_file' => 'themes/baxin-modern/vite.hot',
+                'build_directory' => 'themes/baxin-modern/build',
+                'package_assets_directory' => 'resources/assets',
+            ],
+        ],
     ],
 
     'admin-default' => 'default',

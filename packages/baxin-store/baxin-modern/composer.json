@@ -1,0 +1,18 @@
+{
+    "name": "baxin-store/baxin-modern",
+    "description": "Baxin Modern Theme for Bagisto",
+    "type": "library",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "BaxinStore\\BaxinModern\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "BaxinStore\\BaxinModern\\BaxinModernServiceProvider"
+            ]
+        }
+    }
+}

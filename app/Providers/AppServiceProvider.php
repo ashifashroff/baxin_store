@@ -10,13 +10,9 @@ use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
 {
-    /**
-     * Register any application services.
-     */
     public function register(): void
     {
         $allowedIPs = array_map('trim', explode(',', config('app.debug_allowed_ips', '')));
-
         $allowedIPs = array_filter($allowedIPs);
 
         if (empty($allowedIPs)) {
@@ -30,13 +26,13 @@ class AppServiceProvider extends ServiceProvider
         }
     }
 
-    /**
-     * Bootstrap any application services.
-     */
     public function boot(): void
     {
         ParallelTesting::setUpTestDatabase(function (string $database, int $token) {
             Artisan::call('db:seed');
         });
+
+        // Baxin Modern Theme Views
+        \Illuminate\Support\Facades\View::addNamespace('baxin-modern', base_path('packages/baxin-store/baxin-modern/resources/views'));
     }
 }
