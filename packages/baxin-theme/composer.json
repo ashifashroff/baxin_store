@@ -1,0 +1,22 @@
+{
+    "name": "baxin-store/baxin-theme",
+    "description": "Baxin Store Theme for Bagisto Visual",
+    "version": "1.0.0",
+    "type": "library",
+    "license": "MIT",
+    "require": {
+        "php": "^8.2"
+    },
+    "autoload": {
+        "psr-4": {
+            "BaxinTheme\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "BaxinTheme\\ServiceProvider"
+            ]
+        }
+    }
+}

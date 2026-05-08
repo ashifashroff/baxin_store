@@ -1,0 +1,45 @@
+/* Fix: 4 columns on desktop, 2 on mobile */
+.shop-container .grid.grid-cols-3 {
+    grid-template-columns: repeat(4, 1fr) !important;
+    gap: 1.25rem !important;
+}
+@media (max-width: 1180px) {
+    .shop-container .grid.grid-cols-3 {
+        grid-template-columns: repeat(3, 1fr) !important;
+    }
+}
+@media (max-width: 1060px) {
+    .shop-container .grid.grid-cols-3 {
+        grid-template-columns: repeat(2, 1fr) !important;
+    }
+}
+@media (max-width: 640px) {
+    .shop-container .grid.grid-cols-3 {
+        grid-template-columns: repeat(2, 1fr) !important;
+        gap: 0.5rem !important;
+    }
+}
+
+/* Fix: truncate product titles to 2 lines */
+.grid .break-words.text-base.font-medium {
+    display: -webkit-box !important;
+    -webkit-line-clamp: 2 !important;
+    -webkit-box-orient: vertical !important;
+    overflow: hidden !important;
+    min-height: 2.5em;
+    max-height: 2.5em;
+}
+
+/* Fix: remove card max-width constraints */
+.grid .max-w-\[291px\] {
+    max-width: 100% !important;
+}
+
+/* Fix: mobile card width - allow full width */
+@media (max-width: 640px) {
+    .grid .max-sm\:max-w-\[192px\],
+    .grid .max-sm\:min-w-\[170px\] {
+        max-width: 100% !important;
+        min-width: 0 !important;
+    }
+}

@@ -1,0 +1,10 @@
+{
+  "resources/assets/css/baxin.css": {
+    "file": "baxin.css",
+    "isEntry": true
+  },
+  "resources/assets/js/baxin.js": {
+    "file": "baxin.js",
+    "isEntry": true
+  }
+}
