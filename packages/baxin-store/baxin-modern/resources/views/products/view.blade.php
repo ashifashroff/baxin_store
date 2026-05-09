@@ -3,57 +3,50 @@
 @section('title', ($product->name ?? 'Product') . ' | Baxin Store')
 
 @section('content')
-<section class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
-
-    <nav class="flex items-center space-x-2 text-sm text-gray-400 mb-8">
-        <a href="{{ route('shop.home.index') }}" class="hover:text-gray-600 transition">Home</a>
-        <span>/</span>
+<div class="baxin-section" style="padding-top:32px">
+    <div class="baxin-breadcrumb">
+        <a href="{{ route('shop.home.index') }}">Home</a> /
         @if(isset($product) && $product->categories->count())
             @php $cat = $product->categories->first(); @endphp
-            <a href="{{ route('shop.product_or_category.index', $cat->slug) }}" class="hover:text-gray-600 transition">{{ $cat->name }}</a>
+            <a href="{{ route('shop.product_or_category.index', $cat->slug) }}">{{ $cat->name }}</a> /
         @endif
-        <span>/</span>
-        <span class="text-gray-700 truncate max-w-xs">{{ $product->name ?? 'Product' }}</span>
-    </nav>
+        <span style="color:#333">{{ $product->name ?? 'Product' }}</span>
+    </div>
 
-    <div class="grid grid-cols-1 md:grid-cols-2 gap-10">
-        {{-- Images --}}
+    <div style="display:grid;grid-template-columns:1fr 1fr;gap:40px;max-width:1000px">
+        {{-- Image --}}
         <div>
-            <div class="aspect-square bg-gray-50 rounded-2xl overflow-hidden border border-gray-100">
+            <div style="aspect-ratio:1;background:#f9fafb;border-radius:16px;overflow:hidden;border:1px solid #f0f0f0">
                 @if($product->base_image_url ?? null)
-                    <img src="{{ $product->base_image_url }}" alt="{{ $product->name }}" class="w-full h-full object-contain p-8">
+                    <img src="{{ $product->base_image_url }}" alt="{{ $product->name }}" style="width:100%;height:100%;object-fit:contain;padding:32px">
                 @else
-                    <div class="flex items-center justify-center h-full text-6xl text-gray-200">📦</div>
+                    <div style="display:flex;align-items:center;justify-content:center;height:100%;font-size:48px;color:#e5e7eb">📦</div>
                 @endif
             </div>
         </div>
 
         {{-- Info --}}
         <div>
-            <h1 class="text-2xl font-semibold text-gray-900 mb-2">{{ $product->name ?? '' }}</h1>
+            <h1 style="font-size:24px;font-weight:700;color:#0a0a0a;margin-bottom:8px">{{ $product->name ?? '' }}</h1>
 
-            <div class="flex items-baseline gap-3 mb-6">
+            <div style="margin-bottom:24px">
                 @if(($product->special_price ?? 0) > 0)
-                    <span class="text-3xl font-bold text-accent">${{ number_format($product->special_price, 2) }}</span>
-                    <span class="text-lg text-gray-400 line-through">${{ number_format($product->price, 2) }}</span>
+                    <span style="font-size:28px;font-weight:700;color:#2563EB">${{ number_format($product->special_price, 2) }}</span>
+                    <span style="font-size:16px;color:#9ca3af;text-decoration:line-through;margin-left:8px">${{ number_format($product->price, 2) }}</span>
                 @else
-                    <span class="text-3xl font-bold text-gray-900">${{ number_format($product->price ?? 0, 2) }}</span>
+                    <span style="font-size:28px;font-weight:700;color:#0a0a0a">${{ number_format($product->price ?? 0, 2) }}</span>
                 @endif
             </div>
 
             @if($product->short_description ?? null)
-                <div class="text-sm text-gray-600 leading-relaxed mb-6">{!! $product->short_description !!}</div>
+                <div style="font-size:14px;color:#6b7280;line-height:1.6;margin-bottom:24px">{!! $product->short_description !!}</div>
             @endif
 
-            {{-- Add to Cart via API --}}
-            <div id="add-to-cart-area" class="mb-8">
-                <div class="flex items-center gap-4">
-                    <input type="number" id="qty" value="1" min="1" class="w-16 text-center border border-gray-200 rounded-lg py-2 text-sm">
-                    <button onclick="addToCart({{ $product->id ?? 0 }})" class="flex-1 bg-accent text-white text-sm font-medium px-8 py-3 rounded-full hover:bg-blue-700 transition">Add to Cart</button>
-                </div>
+            <div style="margin-bottom:32px">
+                <button onclick="addToCart({{ $product->id ?? 0 }})" class="baxin-btn-primary" style="width:100%;text-align:center">Add to Cart</button>
             </div>
 
-            <div class="border-t border-gray-100 pt-6 space-y-3 text-sm text-gray-500">
+            <div style="border-top:1px solid #f0f0f0;padding-top:20px;font-size:14px;color:#6b7280;line-height:2">
                 <p>🚚 Free shipping on orders over $50</p>
                 <p>↩️ 30-day return policy</p>
                 <p>🔒 Secure checkout</p>
@@ -63,30 +56,29 @@
 
     {{-- Description --}}
     @if($product->description ?? null)
-        <div class="mt-12 border-t border-gray-100 pt-8">
-            <h2 class="text-xl font-semibold text-gray-900 mb-4">Description</h2>
-            <div class="prose prose-sm max-w-none text-gray-600 leading-relaxed">{!! $product->description !!}</div>
+        <div style="margin-top:48px;border-top:1px solid #f0f0f0;padding-top:32px;max-width:1000px">
+            <h2 style="font-size:20px;font-weight:700;margin-bottom:16px">Description</h2>
+            <div style="font-size:14px;color:#6b7280;line-height:1.8">{!! $product->description !!}</div>
         </div>
     @endif
-
-</section>
+</div>
 
 @push('scripts')
 <script>
 function addToCart(productId) {
-    const qty = document.getElementById('qty').value;
+    var qty = document.getElementById('qty') ? document.getElementById('qty').value : 1;
     fetch('/api/checkout/cart', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             'X-Requested-With': 'XMLHttpRequest',
-            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]')?.content || ''
+            'X-CSRF-TOKEN': document.querySelector('meta[name="csrf-token"]') ? document.querySelector('meta[name="csrf-token"]').content : ''
         },
         body: JSON.stringify({ product_id: productId, quantity: qty })
-    }).then(r => r.json()).then(data => {
+    }).then(function(r) { return r.json(); }).then(function(data) {
         if(data.message) alert(data.message);
         else window.location.href = '/checkout/cart';
-    }).catch(() => alert('Error adding to cart'));
+    }).catch(function() { alert('Error adding to cart'); });
 }
 </script>
 @endpush
