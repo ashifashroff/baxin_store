@@ -12,12 +12,36 @@
     <!-- Bagisto Default CSS + JS (Vue app, components, product grid) -->
     @bagistoVite(['src/Resources/assets/css/app.css', 'src/Resources/assets/js/app.js'], 'shop')
 
-    <!-- Baxin Modern Custom CSS -->
+    <!-- Tailwind CSS CDN (loaded AFTER Bagisto, preflight disabled to avoid conflicts) -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            corePlugins: {
+                preflight: false
+            },
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'sans-serif'],
+                    },
+                    colors: {
+                        accent: '#2563EB',
+                        'accent-hover': '#1d4ed8',
+                    },
+                    maxWidth: {
+                        '8xl': '1320px',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- Baxin Modern Custom Overrides -->
     <link rel="stylesheet" href="https://baxin.store/themes/baxin-modern/assets/css/app.css">
 
     @stack('styles')
 </head>
-<body>
+<body class="font-sans bg-white text-gray-900 antialiased">
 
 <div id="app">
     @include('baxin-modern::layouts.header')

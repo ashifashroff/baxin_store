@@ -5,23 +5,29 @@
 @section('content')
 
     {{-- Hero --}}
-    <div class="baxin-hero">
-        <p class="baxin-hero-label">New Arrivals</p>
-        <h1>Technology that<br>fits your life.</h1>
-        <p>Discover the latest in RC, electronics, gadgets, and tech essentials — curated for modern living.</p>
-        <a href="{{ route('shop.product_or_category.index', 'shop') }}" class="baxin-btn-primary">Shop Now</a>
-    </div>
+    <section class="max-w-8xl mx-auto px-5 py-16 md:py-24 text-center">
+        <p class="text-xs font-semibold text-accent tracking-[0.2em] uppercase mb-4">New Arrivals</p>
+        <h1 class="text-4xl md:text-5xl font-bold text-gray-900 leading-tight mb-5">
+            Technology that<br class="hidden md:block"> fits your life.
+        </h1>
+        <p class="text-lg text-gray-500 max-w-xl mx-auto mb-10">
+            Discover the latest in RC, electronics, gadgets, and tech essentials — curated for modern living.
+        </p>
+        <a href="{{ route('shop.product_or_category.index', 'shop') }}"
+            class="inline-block bg-accent text-white text-sm font-semibold px-8 py-3 rounded-full hover:bg-accent-hover transition">
+            Shop Now
+        </a>
+    </section>
 
     {{-- Category Grid --}}
     @if(isset($categories) && count($categories))
-    <div class="baxin-categories">
-        <div class="baxin-section-header">
-            <h2 class="baxin-section-title">Shop by Category</h2>
-        </div>
-        <div class="baxin-cat-grid">
+    <section class="max-w-8xl mx-auto px-5 pb-12">
+        <h2 class="text-2xl font-bold text-gray-900 mb-8">Shop by Category</h2>
+        <div class="grid grid-cols-3 md:grid-cols-6 gap-3">
             @foreach($categories as $cat)
-                <a href="{{ route('shop.product_or_category.index', $cat['slug']) }}" class="baxin-cat-icon">
-                    <div class="baxin-cat-emoji">
+                <a href="{{ route('shop.product_or_category.index', $cat['slug']) }}"
+                    class="group flex flex-col items-center p-4 rounded-xl border border-gray-100 hover:border-accent hover:shadow-md transition-all no-underline">
+                    <div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center mb-3 text-xl group-hover:bg-accent group-hover:text-white transition">
                         @if($cat['slug'] == 'rc-drones') ✈️
                         @elseif($cat['slug'] == 'rc-vehicles') 🏎️
                         @elseif($cat['slug'] == 'rc-parts') 🔧
@@ -37,20 +43,23 @@
                         @else 🛒
                         @endif
                     </div>
-                    <span class="baxin-cat-name">{{ $cat['name'] }}</span>
+                    <span class="text-xs font-medium text-gray-500 group-hover:text-accent transition text-center">{{ $cat['name'] }}</span>
                 </a>
             @endforeach
         </div>
-    </div>
+    </section>
     @endif
 
     {{-- CTA Banner --}}
-    <div class="baxin-cta">
-        <div class="baxin-cta-inner">
-            <h2>Free shipping on orders over $50</h2>
-            <p>Shop our entire collection with confidence.</p>
-            <a href="{{ route('shop.product_or_category.index', 'shop') }}" class="baxin-btn-primary">Start Shopping</a>
+    <section class="max-w-8xl mx-auto px-5 pb-12">
+        <div class="bg-gradient-to-r from-blue-600 to-blue-800 rounded-2xl p-10 md:p-14 text-center text-white">
+            <h2 class="text-2xl md:text-3xl font-bold mb-3">Free shipping on orders over $50</h2>
+            <p class="text-blue-200 mb-6">Shop our entire collection with confidence.</p>
+            <a href="{{ route('shop.product_or_category.index', 'shop') }}"
+                class="inline-block bg-white text-blue-700 text-sm font-semibold px-8 py-3 rounded-full hover:bg-blue-50 transition">
+                Start Shopping
+            </a>
         </div>
-    </div>
+    </section>
 
 @endsection
