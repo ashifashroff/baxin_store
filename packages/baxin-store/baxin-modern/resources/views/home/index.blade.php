@@ -1,110 +1,108 @@
 @extends('baxin-modern::layouts.master')
+@section('title', 'Baxin Store — RC Toys & Kids')
 
-@section('title', 'Baxin Store — RC Toys, Drones & Kids Electronics')
+@push('styles')
+<style>
+.carousel-slide { display: none; }
+.carousel-slide.active { display: flex; }
+.line-clamp-2 { display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical; overflow: hidden; }
+.no-scrollbar::-webkit-scrollbar { display: none; }
+.no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+</style>
+@endpush
 
 @section('content')
 
-@php
-    // Build category blocks
-    $targetCategoryNames = ['RC Drones', 'RC Robot', 'RC Vehicles', 'Dolls & Stuffed Toys', 'RC Parts'];
-    $categoryBlocks = [];
-    foreach ($targetCategoryNames as $catName) {
-        $cat = app('Webkul\Category\Repositories\CategoryRepository')->getModel()
-            ->whereHas('translation', fn($q) => $q->where('name', $catName))
-            ->where('status', 1)->first();
-        if (!$cat) continue;
-        $pids = DB::table('product_categories')->where('category_id', $cat->id)->pluck('product_id');
-        $prods = app('Webkul\Product\Repositories\ProductFlatRepository')->getModel()
-            ->whereIn('id', $pids)->where('locale', app()->getLocale())->where('status', 1)
-            ->orderBy('created_at', 'desc')->take(5)->get();
-        if ($prods->isEmpty()) continue;
-        $categoryBlocks[] = ['name' => $catName, 'slug' => $cat->slug, 'products' => $prods];
-    }
-
-    // Flash deals
-    $flashDeals = app('Webkul\Product\Repositories\ProductFlatRepository')->getModel()
-        ->where('locale', app()->getLocale())->where('status', 1)
-        ->whereNotNull('special_price')->where('special_price', '>', 0)
-        ->orderBy('special_price', 'asc')->take(5)->get();
-
-    // Carousel
-    $carouselSlides = [
-        ['title' => 'RC Drones', 'subtitle' => 'Explore the skies with our latest FPV & camera drones', 'cta' => 'Shop Drones', 'url' => route('shop.product_or_category.index', 'rc-drones'), 'gradient' => 'from-blue-600 to-indigo-800', 'emoji' => '🚁'],
-        ['title' => 'RC Vehicles', 'subtitle' => 'High-speed cars, trucks & buggies for every terrain', 'cta' => 'Shop Vehicles', 'url' => route('shop.product_or_category.index', 'rc-vehicles'), 'gradient' => 'from-orange-500 to-red-600', 'emoji' => '🏎️'],
-        ['title' => 'Musical Instruments', 'subtitle' => 'Guitars, keyboards & more at unbeatable prices', 'cta' => 'Shop Instruments', 'url' => route('shop.product_or_category.index', 'musical-instruments'), 'gradient' => 'from-purple-600 to-pink-600', 'emoji' => '🎸'],
-    ];
-@endphp
-
-{{-- ====== TOP BANNER ====== --}}
-<div class="bg-accent text-white text-center text-xs py-2 font-medium tracking-wide">
-    🚚 FREE SHIPPING on orders over $50 &nbsp;|&nbsp; 🔄 30-Day Returns &nbsp;|&nbsp; 🔒 Secure Checkout
+{{-- ① TOPBAR --}}
+<div class="bg-gray-900 text-white text-xs py-2 px-4 text-center">
+    <span class="mr-6">🚚 Free shipping on orders over $49</span>
+    <span class="mr-6">🔥 Flash deals updated daily</span>
+    <span>📦 Easy 30-day returns</span>
 </div>
 
-{{-- ====== HERO CAROUSEL ====== --}}
-<div id="heroCarousel" class="relative overflow-hidden">
-    <div id="heroSlides" class="flex transition-transform duration-500">
+{{-- ② HERO CAROUSEL --}}
+<section class="border-b border-gray-100">
+    <div class="max-w-7xl mx-auto relative" id="carousel">
         @foreach($carouselSlides as $i => $slide)
-            <div class="min-w-full bg-gradient-to-r {{ $slide['gradient'] }}">
-                <div class="max-w-8xl mx-auto px-5 py-12 md:py-20 flex flex-col md:flex-row items-center gap-8">
-                    <div class="flex-1 text-white text-center md:text-left">
-                        <h1 class="text-3xl md:text-5xl font-bold mb-4 leading-tight">{{ $slide['title'] }}</h1>
-                        <p class="text-lg text-white/80 mb-6 max-w-lg">{{ $slide['subtitle'] }}</p>
-                        <a href="{{ $slide['url'] }}" class="inline-block bg-white text-gray-900 text-sm font-bold px-8 py-3 rounded-full hover:bg-gray-100 transition">{{ $slide['cta'] }}</a>
-                    </div>
-                    <div class="text-8xl md:text-[120px]">{{ $slide['emoji'] }}</div>
+            <div class="carousel-slide {{ $i === 0 ? 'active' : '' }} items-center py-10 md:py-16 px-6 md:px-12 rounded-2xl mx-4 my-6" style="background: {{ $slide['bg'] }}">
+                <div class="flex-1 text-center md:text-left">
+                    <h2 class="text-3xl md:text-4xl font-bold text-gray-900 mb-3">{{ $slide['title'] }}</h2>
+                    <p class="text-gray-600 mb-6 text-lg">{{ $slide['subtitle'] }}</p>
+                    <a href="{{ $slide['url'] }}" class="inline-block bg-accent text-white text-sm font-semibold px-6 py-2.5 rounded-full hover:bg-accent-hover transition">{{ $slide['cta'] }}</a>
                 </div>
+                @if($slide['image'])
+                    <div class="hidden md:block flex-1 text-center">
+                        <img src="{{ $slide['image'] }}" alt="{{ $slide['title'] }}" class="max-h-64 mx-auto">
+                    </div>
+                @endif
             </div>
         @endforeach
-    </div>
-    <div class="absolute bottom-4 left-1/2 -translate-x-1/2 flex gap-2">
-        @foreach($carouselSlides as $i => $s)
-            <button onclick="goSlide({{ $i }})" class="w-2.5 h-2.5 rounded-full bg-white/50 hover:bg-white transition" id="dot-{{ $i }}"></button>
-        @endforeach
-    </div>
-    <button onclick="prevSlide()" class="absolute left-3 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white w-10 h-10 rounded-full flex items-center justify-center text-xl transition">‹</button>
-    <button onclick="nextSlide()" class="absolute right-3 top-1/2 -translate-y-1/2 bg-white/20 hover:bg-white/40 text-white w-10 h-10 rounded-full flex items-center justify-center text-xl transition">›</button>
-</div>
 
-{{-- ====== CATEGORY ICONS ====== --}}
-<section class="max-w-8xl mx-auto px-5 py-10">
-    <div class="grid grid-cols-4 md:grid-cols-6 gap-3">
-        @if(isset($categories))
-            @foreach($categories as $cat)
-                <a href="{{ route('shop.product_or_category.index', $cat['slug']) }}" class="group flex flex-col items-center p-3 rounded-xl border border-gray-100 hover:border-accent hover:shadow-md transition-all no-underline">
-                    <div class="w-11 h-11 rounded-full bg-blue-50 flex items-center justify-center mb-2 text-lg group-hover:bg-accent group-hover:text-white transition">
-                        @if($cat['slug'] == 'rc-drones') ✈️
-                        @elseif($cat['slug'] == 'rc-vehicles') 🏎️
-                        @elseif($cat['slug'] == 'rc-parts') 🔧
-                        @elseif($cat['slug'] == 'rc-robot') 🤖
-                        @elseif($cat['slug'] == 'musical-instruments') 🎸
-                        @elseif($cat['slug'] == 'model-building-toys') 🧱
-                        @elseif($cat['slug'] == 'learning-education') 📚
-                        @elseif($cat['slug'] == 'dolls-stuffed-toys') 🧸
-                        @elseif($cat['slug'] == 'baby-toddler-toys') 👶
-                        @elseif($cat['slug'] == 'novelty-gagdet-toys') 🎮
-                        @elseif($cat['slug'] == 'sports-outdoor') ⚽
-                        @elseif($cat['slug'] == 'laptop-ac-adapters') 🔌
-                        @else 🛒
-                        @endif
-                    </div>
-                    <span class="text-[11px] font-medium text-gray-500 group-hover:text-accent transition text-center leading-tight">{{ $cat['name'] }}</span>
-                </a>
+        {{-- Dots --}}
+        <div class="flex justify-center gap-2 pb-4">
+            @foreach($carouselSlides as $i => $s)
+                <button onclick="showSlide({{ $i }})" class="w-2.5 h-2.5 rounded-full {{ $i === 0 ? 'bg-accent' : 'bg-gray-300' }} transition" id="dot-{{ $i }}"></button>
             @endforeach
-        @endif
+        </div>
     </div>
 </section>
 
-{{-- ====== FLASH DEALS ====== --}}
+{{-- ③ CATEGORY NAV --}}
+<div class="bg-white border-b border-gray-100 sticky top-[60px] z-40">
+    <div class="max-w-7xl mx-auto px-4 flex items-center gap-6 overflow-x-auto no-scrollbar py-2">
+        <button class="flex items-center gap-1 text-sm font-medium whitespace-nowrap hover:text-blue-600 transition">
+            <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16"/></svg>
+            All Categories
+        </button>
+        <span class="text-gray-200">|</span>
+        @foreach(['RC Drones','RC Robot','RC Vehicles','Dolls & Stuffed Toys','RC Parts','Flash Deals','New Arrivals'] as $cat)
+            <a href="#{{ \Illuminate\Support\Str::slug($cat) }}" class="text-sm text-gray-600 whitespace-nowrap hover:text-blue-600 transition no-underline">{{ $cat }}</a>
+        @endforeach
+    </div>
+</div>
+
+{{-- ④ CATEGORY ICONS --}}
+<section class="max-w-7xl mx-auto px-4 py-8">
+    <div class="grid grid-cols-4 md:grid-cols-6 gap-3">
+        @php
+            $iconCats = app('Webkul\Category\Repositories\CategoryRepository')
+                ->findOrFail(141)->children()->where('status', 1)->get();
+        @endphp
+        @foreach($iconCats as $cat)
+            <a href="{{ route('shop.product_or_category.index', $cat->slug) }}" class="group flex flex-col items-center p-3 rounded-xl border border-gray-100 hover:border-accent hover:shadow-md transition-all no-underline">
+                <div class="w-12 h-12 rounded-full bg-blue-50 flex items-center justify-center mb-2 text-xl group-hover:bg-accent group-hover:text-white transition">
+                    @if($cat->slug == 'rc-drones') ✈️
+                    @elseif($cat->slug == 'rc-vehicles') 🏎️
+                    @elseif($cat->slug == 'rc-parts') 🔧
+                    @elseif($cat->slug == 'rc-robot') 🤖
+                    @elseif($cat->slug == 'musical-instruments') 🎸
+                    @elseif($cat->slug == 'model-building-toys') 🧱
+                    @elseif($cat->slug == 'learning-education') 📚
+                    @elseif($cat->slug == 'dolls-stuffed-toys') 🧸
+                    @elseif($cat->slug == 'baby-toddler-toys') 👶
+                    @elseif($cat->slug == 'novelty-gagdet-toys') 🎮
+                    @elseif($cat->slug == 'sports-outdoor') ⚽
+                    @elseif($cat->slug == 'laptop-ac-adapters') 🔌
+                    @else 🛒
+                    @endif
+                </div>
+                <span class="text-[11px] font-medium text-gray-500 group-hover:text-accent transition text-center leading-tight">{{ $cat->name }}</span>
+            </a>
+        @endforeach
+    </div>
+</section>
+
+{{-- ⑤ FLASH DEALS --}}
 @if($flashDeals->count())
-<section class="max-w-8xl mx-auto px-5 pb-10">
-    <div class="bg-gradient-to-r from-red-500 to-orange-500 rounded-2xl p-6 md:p-8">
-        <div class="flex items-center justify-between mb-6">
+<section id="flash-deals" class="max-w-7xl mx-auto px-4 pb-10">
+    <div class="bg-gradient-to-r from-red-500 to-orange-500 rounded-2xl p-5 md:p-7">
+        <div class="flex items-center justify-between mb-5">
             <div class="flex items-center gap-3">
                 <span class="text-2xl">⚡</span>
-                <h2 class="text-xl md:text-2xl font-bold text-white">Flash Deals</h2>
+                <h2 class="text-xl font-bold text-white">Flash Deals</h2>
                 <span class="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full">Limited Time</span>
             </div>
-            <a href="{{ route('shop.product_or_category.index', 'shop') }}" class="text-white text-sm font-medium hover:underline">View All →</a>
+            <a href="{{ route('shop.product_or_category.index', 'shop') }}" class="text-white text-sm font-medium hover:underline no-underline">View All →</a>
         </div>
         <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
             @foreach($flashDeals as $product)
@@ -130,15 +128,15 @@
 </section>
 @endif
 
-{{-- ====== CATEGORY PRODUCT BLOCKS ====== --}}
+{{-- ⑥ CATEGORY PRODUCT BLOCKS --}}
 @foreach($categoryBlocks as $block)
-<section class="max-w-8xl mx-auto px-5 pb-10">
+<section id="{{ \Illuminate\Support\Str::slug($block['name']) }}" class="max-w-7xl mx-auto px-4 pb-10">
     <div class="flex items-center justify-between mb-5">
         <div class="flex items-center gap-2">
             <div class="w-1 h-6 bg-accent rounded-full"></div>
             <h2 class="text-xl font-bold text-gray-900">{{ $block['name'] }}</h2>
         </div>
-        <a href="{{ route('shop.product_or_category.index', $block['slug']) }}" class="text-sm text-accent font-medium hover:underline">View All →</a>
+        <a href="{{ route('shop.product_or_category.index', $block['slug']) }}" class="text-sm text-accent font-medium hover:underline no-underline">View All →</a>
     </div>
     <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
         @foreach($block['products'] as $product)
@@ -167,21 +165,21 @@
 </section>
 @endforeach
 
-{{-- ====== CTA BANNER ====== --}}
-<section class="max-w-8xl mx-auto px-5 pb-10">
-    <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-8 md:p-14 text-center text-white">
+{{-- ⑦ CTA BANNER --}}
+<section class="max-w-7xl mx-auto px-4 pb-10">
+    <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-8 md:p-12 text-center text-white">
         <h2 class="text-2xl md:text-3xl font-bold mb-3">New Arrivals Every Week</h2>
         <p class="text-blue-200 mb-6 max-w-lg mx-auto">Stay updated with the latest RC products, drones & tech accessories.</p>
-        <a href="{{ route('shop.product_or_category.index', 'shop') }}" class="inline-block bg-white text-blue-700 text-sm font-bold px-8 py-3 rounded-full hover:bg-blue-50 transition">Browse All Products</a>
+        <a href="{{ route('shop.product_or_category.index', 'shop') }}" class="inline-block bg-white text-blue-700 text-sm font-bold px-8 py-3 rounded-full hover:bg-blue-50 transition no-underline">Browse All Products</a>
     </div>
 </section>
 
-{{-- ====== TRUST BADGES ====== --}}
-<section class="max-w-8xl mx-auto px-5 pb-12">
+{{-- ⑧ TRUST BADGES --}}
+<section class="max-w-7xl mx-auto px-4 pb-12">
     <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
         <div class="flex items-center gap-3 p-4 rounded-xl bg-gray-50 border border-gray-100">
             <span class="text-2xl">🚚</span>
-            <div><p class="text-sm font-semibold text-gray-900">Free Shipping</p><p class="text-xs text-gray-500">Orders over $50</p></div>
+            <div><p class="text-sm font-semibold text-gray-900">Free Shipping</p><p class="text-xs text-gray-500">Orders over $49</p></div>
         </div>
         <div class="flex items-center gap-3 p-4 rounded-xl bg-gray-50 border border-gray-100">
             <span class="text-2xl">🔄</span>
@@ -199,18 +197,23 @@
 </section>
 
 {{-- Carousel JS --}}
+@push('scripts')
 <script>
-let currentSlide = 0;
-const totalSlides = {{ count($carouselSlides) }};
-function goSlide(n) {
-    currentSlide = n;
-    document.getElementById('heroSlides').style.transform = 'translateX(-' + (n * 100) + '%)';
-    document.querySelectorAll('[id^="dot-"]').forEach(function(d, i) { d.style.background = i === n ? 'white' : 'rgba(255,255,255,0.5)'; });
+function showSlide(n) {
+    document.querySelectorAll('.carousel-slide').forEach(function(el, i) {
+        el.classList.toggle('active', i === n);
+    });
+    document.querySelectorAll('[id^="dot-"]').forEach(function(el, i) {
+        el.style.background = i === n ? '#2563EB' : '#d1d5db';
+    });
 }
-function nextSlide() { goSlide((currentSlide + 1) % totalSlides); }
-function prevSlide() { goSlide((currentSlide - 1 + totalSlides) % totalSlides); }
-goSlide(0);
-setInterval(nextSlide, 5000);
+var currentSlide = 0;
+var totalSlides = {{ count($carouselSlides) }};
+setInterval(function() {
+    currentSlide = (currentSlide + 1) % totalSlides;
+    showSlide(currentSlide);
+}, 5000);
 </script>
+@endpush
 
 @endsection

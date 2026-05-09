@@ -5,7 +5,7 @@ namespace BaxinStore\BaxinModern\Http\ViewComposers;
 use Illuminate\View\View;
 use Webkul\Category\Repositories\CategoryRepository;
 use Webkul\Product\Repositories\ProductFlatRepository;
-use Carbon\Carbon;
+use Illuminate\Support\Facades\DB;
 
 class HomeComposer
 {
@@ -46,7 +46,7 @@ class HomeComposer
 
             if (!$category) continue;
 
-            $productIds = \DB::table('product_categories')
+            $productIds = DB::table('product_categories')
                 ->where('category_id', $category->id)
                 ->pluck('product_id');
 
@@ -88,28 +88,28 @@ class HomeComposer
     {
         return [
             [
-                'title' => 'RC Drones',
-                'subtitle' => 'Explore the skies with our latest FPV & camera drones',
-                'cta' => 'Shop Drones',
-                'url' => route('shop.product_or_category.index', 'rc-drones'),
-                'gradient' => 'from-blue-600 to-indigo-800',
-                'emoji' => '🚁',
+                'title' => 'RC Drones — Take Flight',
+                'subtitle' => 'Shop the latest drones with HD cameras',
+                'cta' => 'Shop Now',
+                'url' => '/rc-drones',
+                'bg' => '#EEF2FF',
+                'image' => null,
             ],
             [
-                'title' => 'RC Vehicles',
-                'subtitle' => 'High-speed cars, trucks & buggies for every terrain',
-                'cta' => 'Shop Vehicles',
-                'url' => route('shop.product_or_category.index', 'rc-vehicles'),
-                'gradient' => 'from-orange-500 to-red-600',
-                'emoji' => '🏎️',
+                'title' => 'RC Robots — The Future of Play',
+                'subtitle' => 'Interactive robots for kids of all ages',
+                'cta' => 'Explore',
+                'url' => '/rc-robot',
+                'bg' => '#FFF7ED',
+                'image' => null,
             ],
             [
-                'title' => 'Musical Instruments',
-                'subtitle' => 'Guitars, keyboards & more at unbeatable prices',
-                'cta' => 'Shop Instruments',
-                'url' => route('shop.product_or_category.index', 'musical-instruments'),
-                'gradient' => 'from-purple-600 to-pink-600',
-                'emoji' => '🎸',
+                'title' => 'Dolls & Stuffed Toys',
+                'subtitle' => 'Soft, safe, and loved by every child',
+                'cta' => 'View Collection',
+                'url' => '/dolls-stuffed-toys',
+                'bg' => '#FDF2F8',
+                'image' => null,
             ],
         ];
     }
