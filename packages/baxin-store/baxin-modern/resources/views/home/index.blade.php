@@ -74,10 +74,7 @@
             <div class="max-w-md">
                 <h1 class="text-2xl md:text-3xl font-semibold text-gray-900 mb-2 md:mb-3">{{ $slide['title'] }}</h1>
                 <p class="text-gray-500 mb-4 md:mb-6 text-sm md:text-base">{{ $slide['subtitle'] }}</p>
-                <a href="{{ $slide['url'] }}"
-                    class="inline-block bg-blue-600 text-white text-sm font-medium px-6 py-2.5 rounded-full hover:bg-blue-700 transition no-underline">
-                    {{ $slide['cta'] }}
-                </a>
+                <a href="{{ $slide['url'] }}" class="inline-block bg-blue-600 text-white text-sm font-medium px-6 py-2.5 rounded-full hover:bg-blue-700 transition no-underline">{{ $slide['cta'] }}</a>
             </div>
             @if($slide['image'])
                 <img src="{{ $slide['image'] }}" class="h-28 md:h-40 object-contain mt-4 md:mt-0" alt="{{ $slide['title'] }}" />
@@ -86,17 +83,11 @@
             @endif
         </div>
     @endforeach
-
-    <button onclick="prevSlide()"
-        class="absolute left-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full w-8 h-8 flex items-center justify-center shadow text-gray-700">‹</button>
-    <button onclick="nextSlide()"
-        class="absolute right-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full w-8 h-8 flex items-center justify-center shadow text-gray-700">›</button>
-
+    <button onclick="prevSlide()" class="absolute left-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full w-8 h-8 flex items-center justify-center shadow text-gray-700">‹</button>
+    <button onclick="nextSlide()" class="absolute right-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full w-8 h-8 flex items-center justify-center shadow text-gray-700">›</button>
     <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5" id="carousel-dots">
         @foreach($carouselSlides as $i => $slide)
-            <button onclick="goToSlide({{ $i }})"
-                class="carousel-dot w-2 h-2 rounded-full transition {{ $i === 0 ? 'bg-blue-600 w-5' : 'bg-gray-300' }}">
-            </button>
+            <button onclick="goToSlide({{ $i }})" class="carousel-dot w-2 h-2 rounded-full transition {{ $i === 0 ? 'bg-blue-600 w-5' : 'bg-gray-300' }}"></button>
         @endforeach
     </div>
 </div>
@@ -105,24 +96,15 @@
 <div class="max-w-7xl mx-auto px-4 mt-4 grid grid-cols-1 sm:grid-cols-3 gap-3">
     <a href="#" class="bg-blue-50 rounded-xl p-4 flex items-center gap-3 hover:bg-blue-100 transition no-underline">
         <span class="text-2xl">🚁</span>
-        <div>
-            <div class="text-sm font-medium text-blue-900">New Drones</div>
-            <div class="text-xs text-blue-600">Up to 40% off</div>
-        </div>
+        <div><div class="text-sm font-medium text-blue-900">New Drones</div><div class="text-xs text-blue-600">Up to 40% off</div></div>
     </a>
     <a href="#" class="bg-orange-50 rounded-xl p-4 flex items-center gap-3 hover:bg-orange-100 transition no-underline">
         <span class="text-2xl">🤖</span>
-        <div>
-            <div class="text-sm font-medium text-orange-900">RC Robots</div>
-            <div class="text-xs text-orange-600">Free shipping</div>
-        </div>
+        <div><div class="text-sm font-medium text-orange-900">RC Robots</div><div class="text-xs text-orange-600">Free shipping</div></div>
     </a>
     <a href="#" class="bg-pink-50 rounded-xl p-4 flex items-center gap-3 hover:bg-pink-100 transition no-underline">
         <span class="text-2xl">🧸</span>
-        <div>
-            <div class="text-sm font-medium text-pink-900">Toys & Dolls</div>
-            <div class="text-xs text-pink-600">Buy 2 get 1 free</div>
-        </div>
+        <div><div class="text-sm font-medium text-pink-900">Toys & Dolls</div><div class="text-xs text-pink-600">Buy 2 get 1 free</div></div>
     </a>
 </div>
 
@@ -135,12 +117,11 @@
     </div>
     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
         @foreach($block['products'] as $product)
-            <a href="{{ route('shop.product_or_category.index', $product->url_key ?? '#') }}"
+            <a href="{{ route('shop.product_or_category.index', $product->url_key) }}"
                 class="bg-white border border-gray-100 rounded-xl p-3 hover:shadow-md hover:-translate-y-0.5 transition-all group no-underline">
                 <div class="aspect-square bg-gray-50 rounded-lg mb-3 overflow-hidden">
-                    @if($product->base_image_url ?? null)
-                        <img src="{{ $product->base_image_url }}" alt="{{ $product->name }}"
-                            class="w-full h-full object-contain group-hover:scale-105 transition-transform" loading="lazy" />
+                    @if($product->image_url)
+                        <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="w-full h-full object-contain group-hover:scale-105 transition-transform" loading="lazy" />
                     @else
                         <div class="flex items-center justify-center h-full text-3xl text-gray-200">📦</div>
                     @endif
@@ -160,7 +141,7 @@
 </section>
 @endforeach
 
-{{-- ⑦ FLASH DEALS — 1 row × 5 columns --}}
+{{-- ⑦ FLASH DEALS --}}
 @if($flashDeals->count())
 <section id="flash-deals" class="max-w-7xl mx-auto px-4 mt-10">
     <div class="flex items-center justify-between mb-4">
@@ -179,17 +160,14 @@
                 $special = $product->special_price;
                 $discount = $special ? round((($price - $special) / $price) * 100) : 0;
             @endphp
-            <a href="{{ route('shop.product_or_category.index', $product->url_key ?? '#') }}"
+            <a href="{{ route('shop.product_or_category.index', $product->url_key) }}"
                 class="bg-white border border-gray-100 rounded-xl p-3 hover:shadow-md hover:-translate-y-0.5 transition-all group relative no-underline">
                 @if($discount > 0)
-                    <div class="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded">
-                        -{{ $discount }}%
-                    </div>
+                    <div class="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded">-{{ $discount }}%</div>
                 @endif
                 <div class="aspect-square bg-gray-50 rounded-lg mb-3 overflow-hidden">
-                    @if($product->base_image_url ?? null)
-                        <img src="{{ $product->base_image_url }}" alt="{{ $product->name }}"
-                            class="w-full h-full object-contain group-hover:scale-105 transition-transform" loading="lazy" />
+                    @if($product->image_url)
+                        <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="w-full h-full object-contain group-hover:scale-105 transition-transform" loading="lazy" />
                     @else
                         <div class="flex items-center justify-center h-full text-3xl text-gray-200">📦</div>
                     @endif
@@ -199,7 +177,6 @@
                     <span class="text-sm font-semibold text-red-500">${{ number_format($special, 2) }}</span>
                     <span class="text-xs text-gray-400 line-through">${{ number_format($price, 2) }}</span>
                 </div>
-                {{-- Progress bar --}}
                 <div class="mt-2 bg-gray-100 rounded-full h-1.5">
                     <div class="bg-red-400 h-1.5 rounded-full" style="width: {{ rand(30, 85) }}%"></div>
                 </div>
@@ -284,10 +261,9 @@
 
 @push('scripts')
 <script>
-// ── Carousel ──────────────────────────────────────────────
-let current = 0;
-const slides = document.querySelectorAll('.carousel-slide');
-const dots = document.querySelectorAll('.carousel-dot');
+var current = 0;
+var slides = document.querySelectorAll('.carousel-slide');
+var dots = document.querySelectorAll('.carousel-dot');
 
 function goToSlide(n) {
     slides[current].classList.remove('active');
@@ -302,18 +278,17 @@ function nextSlide() { goToSlide(current + 1); }
 function prevSlide() { goToSlide(current - 1); }
 setInterval(nextSlide, 5000);
 
-// ── Flash Deals Countdown ─────────────────────────────────
 function updateCountdown() {
-    const el = document.getElementById('flash-countdown');
+    var el = document.getElementById('flash-countdown');
     if (!el) return;
-    const now = new Date();
-    const end = new Date();
+    var now = new Date();
+    var end = new Date();
     end.setHours(23, 59, 59, 0);
-    let diff = Math.max(0, Math.floor((end - now) / 1000));
-    const h = String(Math.floor(diff / 3600)).padStart(2, '0');
+    var diff = Math.max(0, Math.floor((end - now) / 1000));
+    var h = String(Math.floor(diff / 3600)).padStart(2, '0');
     diff %= 3600;
-    const m = String(Math.floor(diff / 60)).padStart(2, '0');
-    const s = String(diff % 60).padStart(2, '0');
+    var m = String(Math.floor(diff / 60)).padStart(2, '0');
+    var s = String(diff % 60).padStart(2, '0');
     el.textContent = h + ':' + m + ':' + s;
 }
 updateCountdown();

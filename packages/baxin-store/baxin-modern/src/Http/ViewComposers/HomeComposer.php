@@ -4,7 +4,6 @@ namespace BaxinStore\BaxinModern\Http\ViewComposers;
 
 use Illuminate\View\View;
 use Webkul\Category\Repositories\CategoryRepository;
-use Webkul\Product\Repositories\ProductFlatRepository;
 use Illuminate\Support\Facades\DB;
 
 class HomeComposer
@@ -18,8 +17,7 @@ class HomeComposer
     ];
 
     public function __construct(
-        protected CategoryRepository $categoryRepository,
-        protected ProductFlatRepository $productFlatRepository
+        protected CategoryRepository $categoryRepository
     ) {}
 
     public function compose(View $view): void
@@ -29,6 +27,16 @@ class HomeComposer
             'flashDeals' => $this->getFlashDeals(),
             'carouselSlides' => $this->getCarouselSlides(),
         ]);
+    }
+
+    protected function getProductImageUrl($productId): string
+    {
+        $path = DB::table('product_images')
+            ->where('product_id', $productId)
+            ->orderBy('id')
+            ->value('path');
+
+        return $path ? 'https://baxin.store/cache/medium/' . $path : '';
     }
 
     protected function getCategoryBlocks(): array
@@ -46,20 +54,22 @@ class HomeComposer
 
             if (!$category) continue;
 
-            $productIds = DB::table('product_categories')
-                ->where('category_id', $category->id)
-                ->pluck('product_id');
-
-            $products = $this->productFlatRepository
-                ->getModel()
-                ->whereIn('id', $productIds)
-                ->where('locale', app()->getLocale())
-                ->where('status', 1)
-                ->orderBy('created_at', 'desc')
+            $products = DB::table('product_flat')
+                ->join('product_categories', 'product_flat.id', '=', 'product_categories.product_id')
+                ->where('product_categories.category_id', $category->id)
+                ->where('product_flat.locale', app()->getLocale())
+                ->where('product_flat.status', 1)
+                ->select('product_flat.id', 'product_flat.name', 'product_flat.url_key', 'product_flat.price', 'product_flat.special_price')
+                ->orderBy('product_flat.created_at', 'desc')
                 ->take(5)
                 ->get();
 
             if ($products->isEmpty()) continue;
+
+            // Attach image URLs
+            $products->each(function ($p) {
+                $p->image_url = $this->getProductImageUrl($p->id);
+            });
 
             $blocks[] = [
                 'name' => $name,
@@ -73,15 +83,21 @@ class HomeComposer
 
     protected function getFlashDeals()
     {
-        return $this->productFlatRepository
-            ->getModel()
+        $products = DB::table('product_flat')
             ->where('locale', app()->getLocale())
             ->where('status', 1)
             ->whereNotNull('special_price')
             ->where('special_price', '>', 0)
             ->orderBy('special_price', 'asc')
+            ->select('id', 'name', 'url_key', 'price', 'special_price')
             ->take(5)
             ->get();
+
+        $products->each(function ($p) {
+            $p->image_url = $this->getProductImageUrl($p->id);
+        });
+
+        return $products;
     }
 
     protected function getCarouselSlides(): array

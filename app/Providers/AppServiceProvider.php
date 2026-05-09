@@ -6,6 +6,7 @@ use Barryvdh\Debugbar\Facades\Debugbar;
 use Illuminate\Support\Facades\Artisan;
 use Illuminate\Support\Facades\ParallelTesting;
 use Illuminate\Support\Facades\Request;
+use Illuminate\Support\Facades\View;
 use Illuminate\Support\ServiceProvider;
 
 class AppServiceProvider extends ServiceProvider
@@ -33,6 +34,10 @@ class AppServiceProvider extends ServiceProvider
         });
 
         // Baxin Modern Theme Views
-        \Illuminate\Support\Facades\View::addNamespace('baxin-modern', base_path('packages/baxin-store/baxin-modern/resources/views'));
+        View::addNamespace('baxin-modern', base_path('packages/baxin-store/baxin-modern/resources/views'));
+
+        // Baxin Modern HomeComposer
+        View::composer('baxin-modern::home.index', \BaxinStore\BaxinModern\Http\ViewComposers\HomeComposer::class);
+        View::composer('shop::home.index', \BaxinStore\BaxinModern\Http\ViewComposers\HomeComposer::class);
     }
 }
