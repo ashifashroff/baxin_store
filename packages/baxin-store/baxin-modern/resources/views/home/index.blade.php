@@ -87,13 +87,11 @@
         </div>
     @endforeach
 
-    {{-- Controls --}}
     <button onclick="prevSlide()"
         class="absolute left-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full w-8 h-8 flex items-center justify-center shadow text-gray-700">‹</button>
     <button onclick="nextSlide()"
         class="absolute right-3 top-1/2 -translate-y-1/2 bg-white/80 hover:bg-white rounded-full w-8 h-8 flex items-center justify-center shadow text-gray-700">›</button>
 
-    {{-- Dots --}}
     <div class="absolute bottom-3 left-1/2 -translate-x-1/2 flex gap-1.5" id="carousel-dots">
         @foreach($carouselSlides as $i => $slide)
             <button onclick="goToSlide({{ $i }})"
@@ -128,72 +126,33 @@
     </a>
 </div>
 
-{{-- ⑥ FLASH DEALS --}}
-@if($flashDeals->count())
-<section id="flash-deals" class="max-w-7xl mx-auto px-4 py-8">
-    <div class="bg-gradient-to-r from-red-500 to-orange-500 rounded-2xl p-5 md:p-7">
-        <div class="flex items-center justify-between mb-5">
-            <div class="flex items-center gap-3">
-                <span class="text-2xl">⚡</span>
-                <h2 class="text-xl font-bold text-white">Flash Deals</h2>
-                <span class="bg-white/20 text-white text-xs font-bold px-3 py-1 rounded-full">Limited Time</span>
-            </div>
-            <a href="{{ route('shop.product_or_category.index', 'shop') }}" class="text-white text-sm font-medium hover:underline no-underline">View All →</a>
-        </div>
-        <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
-            @foreach($flashDeals as $product)
-                <a href="{{ route('shop.product_or_category.index', $product->url_key ?? '#') }}" class="bg-white rounded-xl overflow-hidden hover:shadow-lg transition group no-underline">
-                    <div class="aspect-square bg-gray-50 p-3">
-                        @if($product->base_image_url ?? null)
-                            <img src="{{ $product->base_image_url }}" alt="{{ $product->name }}" class="w-full h-full object-contain group-hover:scale-105 transition-transform" loading="lazy">
-                        @else
-                            <div class="flex items-center justify-center h-full text-3xl text-gray-200">📦</div>
-                        @endif
-                    </div>
-                    <div class="p-3">
-                        <h3 class="text-xs font-medium text-gray-800 line-clamp-2 leading-4 mb-2">{{ $product->name }}</h3>
-                        <div class="flex items-baseline gap-1.5">
-                            <span class="text-sm font-bold text-red-600">${{ number_format($product->special_price, 2) }}</span>
-                            <span class="text-[11px] text-gray-400 line-through">${{ number_format($product->price, 2) }}</span>
-                        </div>
-                    </div>
-                </a>
-            @endforeach
-        </div>
-    </div>
-</section>
-@endif
-
-{{-- ⑦ CATEGORY PRODUCT BLOCKS --}}
+{{-- ⑥ CATEGORY PRODUCT BLOCKS --}}
 @foreach($categoryBlocks as $block)
-<section id="{{ \Illuminate\Support\Str::slug($block['name']) }}" class="max-w-7xl mx-auto px-4 pb-10">
-    <div class="flex items-center justify-between mb-5">
-        <div class="flex items-center gap-2">
-            <div class="w-1 h-6 bg-accent rounded-full"></div>
-            <h2 class="text-xl font-bold text-gray-900">{{ $block['name'] }}</h2>
-        </div>
-        <a href="{{ route('shop.product_or_category.index', $block['slug']) }}" class="text-sm text-accent font-medium hover:underline no-underline">View All →</a>
+<section id="{{ \Illuminate\Support\Str::slug($block['name']) }}" class="max-w-7xl mx-auto px-4 mt-8">
+    <div class="flex items-center justify-between mb-4">
+        <h2 class="text-lg font-semibold text-gray-900">{{ $block['name'] }}</h2>
+        <a href="/{{ $block['slug'] }}" class="text-sm text-blue-600 hover:underline no-underline">View all ›</a>
     </div>
-    <div class="grid grid-cols-2 md:grid-cols-5 gap-3">
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
         @foreach($block['products'] as $product)
-            <a href="{{ route('shop.product_or_category.index', $product->url_key ?? '#') }}" class="border border-gray-100 rounded-xl overflow-hidden hover:border-accent hover:shadow-md transition group no-underline">
-                <div class="aspect-square bg-gray-50 p-3">
+            <a href="{{ route('shop.product_or_category.index', $product->url_key ?? '#') }}"
+                class="bg-white border border-gray-100 rounded-xl p-3 hover:shadow-md hover:-translate-y-0.5 transition-all group no-underline">
+                <div class="aspect-square bg-gray-50 rounded-lg mb-3 overflow-hidden">
                     @if($product->base_image_url ?? null)
-                        <img src="{{ $product->base_image_url }}" alt="{{ $product->name }}" class="w-full h-full object-contain group-hover:scale-105 transition-transform" loading="lazy">
+                        <img src="{{ $product->base_image_url }}" alt="{{ $product->name }}"
+                            class="w-full h-full object-contain group-hover:scale-105 transition-transform" loading="lazy" />
                     @else
                         <div class="flex items-center justify-center h-full text-3xl text-gray-200">📦</div>
                     @endif
                 </div>
-                <div class="p-3">
-                    <h3 class="text-xs font-medium text-gray-800 line-clamp-2 leading-4 mb-1.5">{{ $product->name }}</h3>
-                    <div class="flex items-baseline gap-1.5">
-                        @if(($product->special_price ?? 0) > 0)
-                            <span class="text-sm font-bold text-accent">${{ number_format($product->special_price, 2) }}</span>
-                            <span class="text-[11px] text-gray-400 line-through">${{ number_format($product->price, 2) }}</span>
-                        @else
-                            <span class="text-sm font-bold text-gray-900">${{ number_format($product->price, 2) }}</span>
-                        @endif
-                    </div>
+                <p class="text-xs text-gray-700 line-clamp-2 mb-2">{{ $product->name }}</p>
+                <div class="flex items-center gap-1.5">
+                    @if(($product->special_price ?? 0) > 0)
+                        <span class="text-sm font-semibold text-red-500">${{ number_format($product->special_price, 2) }}</span>
+                        <span class="text-xs text-gray-400 line-through">${{ number_format($product->price, 2) }}</span>
+                    @else
+                        <span class="text-sm font-semibold text-gray-900">${{ number_format($product->price, 2) }}</span>
+                    @endif
                 </div>
             </a>
         @endforeach
@@ -201,56 +160,163 @@
 </section>
 @endforeach
 
-{{-- ⑧ CTA BANNER --}}
-<section class="max-w-7xl mx-auto px-4 pb-10">
-    <div class="bg-gradient-to-r from-blue-600 to-indigo-700 rounded-2xl p-8 md:p-12 text-center text-white">
-        <h2 class="text-2xl md:text-3xl font-bold mb-3">New Arrivals Every Week</h2>
-        <p class="text-blue-200 mb-6 max-w-lg mx-auto">Stay updated with the latest RC products, drones & tech accessories.</p>
-        <a href="{{ route('shop.product_or_category.index', 'shop') }}" class="inline-block bg-white text-blue-700 text-sm font-bold px-8 py-3 rounded-full hover:bg-blue-50 transition no-underline">Browse All Products</a>
+{{-- ⑦ FLASH DEALS — 1 row × 5 columns --}}
+@if($flashDeals->count())
+<section id="flash-deals" class="max-w-7xl mx-auto px-4 mt-10">
+    <div class="flex items-center justify-between mb-4">
+        <div class="flex items-center gap-3">
+            <h2 class="text-lg font-semibold text-gray-900">⚡️ Flash Deals</h2>
+            <div class="bg-red-500 text-white text-xs font-medium px-3 py-1 rounded-full flex items-center gap-1">
+                Ends in <span id="flash-countdown" class="font-mono ml-1">--:--:--</span>
+            </div>
+        </div>
+        <a href="/special-offers" class="text-sm text-blue-600 hover:underline no-underline">View all ›</a>
+    </div>
+    <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
+        @foreach($flashDeals as $product)
+            @php
+                $price = $product->price;
+                $special = $product->special_price;
+                $discount = $special ? round((($price - $special) / $price) * 100) : 0;
+            @endphp
+            <a href="{{ route('shop.product_or_category.index', $product->url_key ?? '#') }}"
+                class="bg-white border border-gray-100 rounded-xl p-3 hover:shadow-md hover:-translate-y-0.5 transition-all group relative no-underline">
+                @if($discount > 0)
+                    <div class="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded">
+                        -{{ $discount }}%
+                    </div>
+                @endif
+                <div class="aspect-square bg-gray-50 rounded-lg mb-3 overflow-hidden">
+                    @if($product->base_image_url ?? null)
+                        <img src="{{ $product->base_image_url }}" alt="{{ $product->name }}"
+                            class="w-full h-full object-contain group-hover:scale-105 transition-transform" loading="lazy" />
+                    @else
+                        <div class="flex items-center justify-center h-full text-3xl text-gray-200">📦</div>
+                    @endif
+                </div>
+                <p class="text-xs text-gray-700 line-clamp-2 mb-2">{{ $product->name }}</p>
+                <div class="flex items-center gap-1.5">
+                    <span class="text-sm font-semibold text-red-500">${{ number_format($special, 2) }}</span>
+                    <span class="text-xs text-gray-400 line-through">${{ number_format($price, 2) }}</span>
+                </div>
+                {{-- Progress bar --}}
+                <div class="mt-2 bg-gray-100 rounded-full h-1.5">
+                    <div class="bg-red-400 h-1.5 rounded-full" style="width: {{ rand(30, 85) }}%"></div>
+                </div>
+                <p class="text-xs text-gray-400 mt-1">Almost gone</p>
+            </a>
+        @endforeach
     </div>
 </section>
+@endif
 
-{{-- ⑨ TRUST BADGES --}}
-<section class="max-w-7xl mx-auto px-4 pb-12">
-    <div class="grid grid-cols-2 md:grid-cols-4 gap-4">
-        <div class="flex items-center gap-3 p-4 rounded-xl bg-gray-50 border border-gray-100">
-            <span class="text-2xl">🚚</span>
-            <div><p class="text-sm font-semibold text-gray-900">Free Shipping</p><p class="text-xs text-gray-500">Orders over $49</p></div>
+{{-- ⑧ BOTTOM BANNERS --}}
+<div class="max-w-7xl mx-auto px-4 mt-10 grid grid-cols-1 sm:grid-cols-2 gap-4">
+    <a href="#" class="bg-gradient-to-r from-blue-600 to-blue-400 rounded-2xl p-6 flex items-center justify-between text-white hover:opacity-90 transition no-underline">
+        <div>
+            <div class="text-lg font-semibold mb-1">RC Parts Clearance</div>
+            <div class="text-sm text-blue-100">Up to 60% off genuine parts</div>
+            <div class="mt-3 inline-block bg-white text-blue-600 text-xs font-medium px-4 py-1.5 rounded-full">Shop Now</div>
         </div>
-        <div class="flex items-center gap-3 p-4 rounded-xl bg-gray-50 border border-gray-100">
-            <span class="text-2xl">🔄</span>
-            <div><p class="text-sm font-semibold text-gray-900">30-Day Returns</p><p class="text-xs text-gray-500">Hassle-free</p></div>
+        <span class="text-5xl">🔧</span>
+    </a>
+    <a href="#" class="bg-gradient-to-r from-pink-500 to-rose-400 rounded-2xl p-6 flex items-center justify-between text-white hover:opacity-90 transition no-underline">
+        <div>
+            <div class="text-lg font-semibold mb-1">Kids' Favourites</div>
+            <div class="text-sm text-pink-100">Dolls, plushies & more</div>
+            <div class="mt-3 inline-block bg-white text-pink-600 text-xs font-medium px-4 py-1.5 rounded-full">Explore</div>
         </div>
-        <div class="flex items-center gap-3 p-4 rounded-xl bg-gray-50 border border-gray-100">
-            <span class="text-2xl">🔒</span>
-            <div><p class="text-sm font-semibold text-gray-900">Secure Checkout</p><p class="text-xs text-gray-500">SSL encrypted</p></div>
+        <span class="text-5xl">🧸</span>
+    </a>
+</div>
+
+{{-- ⑨ FOOTER --}}
+<footer class="bg-gray-50 border-t border-gray-100 mt-16">
+    <div class="max-w-7xl mx-auto px-4 py-12">
+        <div class="grid grid-cols-2 sm:grid-cols-4 gap-8 mb-10">
+            <div>
+                <div class="text-base font-semibold text-gray-900 mb-4">Baxin Store</div>
+                <p class="text-sm text-gray-500 leading-relaxed">Your one-stop shop for RC toys, drones, robots and kids' favourites.</p>
+                <div class="flex gap-3 mt-4">
+                    <a href="#" class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 hover:bg-blue-100 transition text-xs no-underline">f</a>
+                    <a href="#" class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 hover:bg-pink-100 transition text-xs no-underline">ig</a>
+                    <a href="#" class="w-8 h-8 bg-gray-200 rounded-full flex items-center justify-center text-gray-600 hover:bg-red-100 transition text-xs no-underline">yt</a>
+                </div>
+            </div>
+            <div>
+                <div class="text-sm font-semibold text-gray-900 mb-4">Shop</div>
+                <ul class="space-y-2 text-sm text-gray-500 list-none p-0 m-0">
+                    @foreach(['RC Drones','RC Robot','RC Vehicles','Dolls & Stuffed Toys','RC Parts'] as $cat)
+                        <li><a href="#" class="hover:text-gray-900 transition no-underline">{{ $cat }}</a></li>
+                    @endforeach
+                </ul>
+            </div>
+            <div>
+                <div class="text-sm font-semibold text-gray-900 mb-4">Support</div>
+                <ul class="space-y-2 text-sm text-gray-500 list-none p-0 m-0">
+                    <li><a href="#" class="hover:text-gray-900 transition no-underline">Help Center</a></li>
+                    <li><a href="#" class="hover:text-gray-900 transition no-underline">Track Order</a></li>
+                    <li><a href="#" class="hover:text-gray-900 transition no-underline">Returns</a></li>
+                    <li><a href="#" class="hover:text-gray-900 transition no-underline">Contact Us</a></li>
+                </ul>
+            </div>
+            <div>
+                <div class="text-sm font-semibold text-gray-900 mb-4">We Accept</div>
+                <div class="flex flex-wrap gap-2">
+                    @foreach(['PayPal','Stripe','Razorpay','PayU'] as $pay)
+                        <span class="bg-white border border-gray-200 text-xs text-gray-600 px-2 py-1 rounded">{{ $pay }}</span>
+                    @endforeach
+                </div>
+                <div class="text-sm font-semibold text-gray-900 mt-6 mb-3">Legal</div>
+                <ul class="space-y-2 text-sm text-gray-500 list-none p-0 m-0">
+                    <li><a href="#" class="hover:text-gray-900 transition no-underline">Privacy Policy</a></li>
+                    <li><a href="#" class="hover:text-gray-900 transition no-underline">Terms of Service</a></li>
+                </ul>
+            </div>
         </div>
-        <div class="flex items-center gap-3 p-4 rounded-xl bg-gray-50 border border-gray-100">
-            <span class="text-2xl">💬</span>
-            <div><p class="text-sm font-semibold text-gray-900">24/7 Support</p><p class="text-xs text-gray-500">Always here to help</p></div>
+        <div class="border-t border-gray-200 pt-6 text-sm text-gray-400 text-center">
+            © {{ date('Y') }} Baxin Store — Mirai Global Solutions. All rights reserved.
         </div>
     </div>
-</section>
-
-{{-- Carousel JS --}}
-@push('scripts')
-<script>
-var currentSlide = 0;
-var totalSlides = {{ count($carouselSlides) }};
-
-function goToSlide(n) {
-    currentSlide = n;
-    var slides = document.querySelectorAll('.carousel-slide');
-    var dots = document.querySelectorAll('.carousel-dot');
-    for (var i = 0; i < slides.length; i++) {
-        slides[i].classList.toggle('active', i === n);
-        dots[i].className = 'carousel-dot w-2 h-2 rounded-full transition ' + (i === n ? 'bg-blue-600 w-5' : 'bg-gray-300');
-    }
-}
-function nextSlide() { goToSlide((currentSlide + 1) % totalSlides); }
-function prevSlide() { goToSlide((currentSlide - 1 + totalSlides) % totalSlides); }
-setInterval(nextSlide, 5000);
-</script>
-@endpush
+</footer>
 
 @endsection
+
+@push('scripts')
+<script>
+// ── Carousel ──────────────────────────────────────────────
+let current = 0;
+const slides = document.querySelectorAll('.carousel-slide');
+const dots = document.querySelectorAll('.carousel-dot');
+
+function goToSlide(n) {
+    slides[current].classList.remove('active');
+    dots[current].classList.remove('bg-blue-600', 'w-5');
+    dots[current].classList.add('bg-gray-300');
+    current = (n + slides.length) % slides.length;
+    slides[current].classList.add('active');
+    dots[current].classList.add('bg-blue-600', 'w-5');
+    dots[current].classList.remove('bg-gray-300');
+}
+function nextSlide() { goToSlide(current + 1); }
+function prevSlide() { goToSlide(current - 1); }
+setInterval(nextSlide, 5000);
+
+// ── Flash Deals Countdown ─────────────────────────────────
+function updateCountdown() {
+    const el = document.getElementById('flash-countdown');
+    if (!el) return;
+    const now = new Date();
+    const end = new Date();
+    end.setHours(23, 59, 59, 0);
+    let diff = Math.max(0, Math.floor((end - now) / 1000));
+    const h = String(Math.floor(diff / 3600)).padStart(2, '0');
+    diff %= 3600;
+    const m = String(Math.floor(diff / 60)).padStart(2, '0');
+    const s = String(diff % 60).padStart(2, '0');
+    el.textContent = h + ':' + m + ':' + s;
+}
+updateCountdown();
+setInterval(updateCountdown, 1000);
+</script>
+@endpush
