@@ -62,6 +62,17 @@ input[type=range]::-webkit-slider-runnable-track { height: 4px; background: #E5E
                 @endforeach
             </div>
 
+            {{-- Availability --}}
+            <div class="mb-6">
+                <h3 class="text-sm font-semibold text-gray-900 mb-3">Availability</h3>
+                <label class="flex items-center gap-2 cursor-pointer">
+                    <input type="checkbox" name="in_stock" value="1"
+                        {{ request('in_stock') ? 'checked' : '' }}
+                        class="accent-blue-600 rounded" />
+                    <span class="text-sm text-gray-600">In Stock Only</span>
+                </label>
+            </div>
+
             {{-- Subcategories --}}
             @if(isset($category) && $category->children->count())
                 <div class="mb-6">
@@ -72,29 +83,35 @@ input[type=range]::-webkit-slider-runnable-track { height: 4px; background: #E5E
                 </div>
             @endif
 
-            <button type="submit" class="w-full bg-blue-600 text-white text-sm font-medium py-2 rounded-lg hover:bg-blue-700 transition">Apply Filters</button>
+            <button type="submit" class="w-full bg-blue-600 text-white text-sm font-medium py-2.5 rounded-full hover:bg-blue-700 transition">Apply Filters</button>
+            <a href="{{ request()->url() }}" class="block text-center text-xs text-gray-400 mt-2 hover:text-gray-600 no-underline">Clear all</a>
         </form>
     </aside>
 
-    {{-- MAIN PRODUCT AREA --}}
-    <div class="flex-1">
-        <div class="flex items-center justify-between mb-4">
-            <h1 class="text-xl font-bold text-gray-900">{{ $category->name ?? 'Categories' }}</h1>
+    {{-- MAIN CONTENT --}}
+    <div class="flex-1 min-w-0">
+
+        {{-- Header row --}}
+        <div class="flex items-center justify-between mb-5 flex-wrap gap-3">
+            <div>
+                <h1 class="text-xl font-semibold text-gray-900">{{ $category->name ?? 'Categories' }}</h1>
+            </div>
             {{-- Mobile sort --}}
-            <select class="lg:hidden text-sm border border-gray-200 rounded-lg px-3 py-2 bg-white" onchange="window.location.href=this.value">
-                <option value="?sort=newest" {{ request('sort','newest')==='newest'?'selected':'' }}>Newest</option>
-                <option value="?sort=price_asc" {{ request('sort')==='price_asc'?'selected':'' }}>Price: Low → High</option>
-                <option value="?sort=price_desc" {{ request('sort')==='price_desc'?'selected':'' }}>Price: High → Low</option>
+            <select name="sort" onchange="window.location.href='?sort='+this.value"
+                class="lg:hidden text-sm border border-gray-200 rounded-lg px-3 py-2">
+                <option value="newest" {{ request('sort','newest')==='newest'?'selected':'' }}>Newest</option>
+                <option value="price_asc" {{ request('sort')==='price_asc'?'selected':'' }}>Price ↑</option>
+                <option value="price_desc" {{ request('sort')==='price_desc'?'selected':'' }}>Price ↓</option>
             </select>
         </div>
 
-        {{-- Bagisto Product List (Vue component) --}}
+        {{-- Bagisto Product Grid (Vue component) --}}
         <v-product-list category-id="{{ $category->id ?? 141 }}">
-            <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-3">
+            <div class="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
                 <div class="bg-gray-100 rounded-xl h-64 animate-pulse"></div>
                 <div class="bg-gray-100 rounded-xl h-64 animate-pulse"></div>
-                <div class="bg-gray-100 rounded-pulse"></div>
-                <div class="bg-gray-100 rounded-xl h-64 animate-pulse hidden md:block"></div>
+                <div class="bg-gray-100 rounded-xl h-64 animate-pulse hidden sm:block"></div>
+                <div class="bg-gray-100 rounded-xl h-64 animate-pulse hidden lg:block"></div>
             </div>
         </v-product-list>
     </div>
