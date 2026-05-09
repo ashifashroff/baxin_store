@@ -12,7 +12,27 @@
     <!-- Bagisto Default CSS + JS (Vue app, components, product grid) -->
     @bagistoVite(['src/Resources/assets/css/app.css', 'src/Resources/assets/js/app.js'], 'shop')
 
-    <!-- Tailwind CSS CDN (loaded AFTER Bagisto, preflight disabled to avoid conflicts) -->
+    @stack('styles')
+</head>
+<body class="font-sans bg-white text-gray-900 antialiased">
+
+<div id="app">
+    @include('baxin-modern::layouts.header')
+
+    <main class="min-h-screen">
+        {!! view_render_event('bagisto.shop.layout.body.before') !!}
+
+        @yield('content')
+
+        {!! view_render_event('bagisto.shop.layout.body.after') !!}
+    </main>
+
+    @include('baxin-modern::layouts.footer')
+</div>
+
+    @stack('scripts')
+
+    <!-- Tailwind CSS CDN (loaded LAST, after Vue app mounts, preflight disabled) -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
@@ -38,25 +58,5 @@
 
     <!-- Baxin Modern Custom Overrides -->
     <link rel="stylesheet" href="https://baxin.store/themes/baxin-modern/assets/css/app.css">
-
-    @stack('styles')
-</head>
-<body class="font-sans bg-white text-gray-900 antialiased">
-
-<div id="app">
-    @include('baxin-modern::layouts.header')
-
-    <main class="min-h-screen">
-        {!! view_render_event('bagisto.shop.layout.body.before') !!}
-
-        @yield('content')
-
-        {!! view_render_event('bagisto.shop.layout.body.after') !!}
-    </main>
-
-    @include('baxin-modern::layouts.footer')
-</div>
-
-    @stack('scripts')
 </body>
 </html>
