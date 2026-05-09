@@ -102,10 +102,10 @@
                             <a href="{{ route('shop.customers.account.orders.index') }}" class="block px-4 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-gray-50 transition">My Orders</a>
                             <a href="{{ route('shop.customers.account.wishlist.index') }}" class="block px-4 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-gray-50 transition">Wishlist</a>
                             <div class="border-t border-gray-50 mt-1 pt-1">
-                                <a href="{{ route('shop.customers.session.destroy') }}" class="block px-4 py-2 text-sm text-red-500 hover:bg-red-50 transition">Sign Out</a>
+                                <a href="{{ route('shop.customer.session.destroy') }}" class="block px-4 py-2 text-sm text-red-500 hover:bg-red-50 transition">Sign Out</a>
                             </div>
                         @else
-                            <a href="{{ route('shop.customers.session.index') }}" class="block px-4 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-gray-50 transition">Sign In</a>
+                            <a href="{{ route('shop.customer.session.index') }}" class="block px-4 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-gray-50 transition">Sign In</a>
                             <a href="{{ route('shop.customers.register.index') }}" class="block px-4 py-2 text-sm text-gray-600 hover:text-blue-600 hover:bg-gray-50 transition">Create Account</a>
                         @endif
                     </div>
@@ -256,12 +256,12 @@
                    class="block w-full text-center text-sm bg-blue-600 text-white py-2.5 rounded-full hover:bg-blue-700 transition">
                     My Account
                 </a>
-                <a href="{{ route('shop.customers.session.destroy') }}"
+                <a href="{{ route('shop.customer.session.destroy') }}"
                    class="block w-full text-center text-sm text-gray-400 py-1.5 hover:text-red-500 transition">
                     Sign Out
                 </a>
             @else
-                <a href="{{ route('shop.customers.session.index') }}"
+                <a href="{{ route('shop.customer.session.index') }}"
                    class="block w-full text-center text-sm bg-blue-600 text-white py-2.5 rounded-full hover:bg-blue-700 transition">
                     Sign In
                 </a>
