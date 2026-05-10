@@ -117,25 +117,7 @@
     </div>
     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
         @foreach($block['products'] as $product)
-            <a href="{{ route('shop.product_or_category.index', $product->url_key) }}"
-                class="bg-white border border-gray-100 rounded-xl p-3 hover:shadow-md hover:-translate-y-0.5 transition-all group no-underline">
-                <div class="aspect-square bg-gray-50 rounded-lg mb-3 overflow-hidden">
-                    @if($product->image_url)
-                        <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="w-full h-full object-contain group-hover:scale-105 transition-transform" loading="lazy" />
-                    @else
-                        <div class="flex items-center justify-center h-full text-3xl text-gray-200">📦</div>
-                    @endif
-                </div>
-                <p class="text-xs text-gray-700 line-clamp-2 mb-2">{{ $product->name }}</p>
-                <div class="flex items-center gap-1.5">
-                    @if(($product->special_price ?? 0) > 0)
-                        <span class="text-sm font-semibold text-red-500">${{ number_format($product->special_price, 2) }}</span>
-                        <span class="text-xs text-gray-400 line-through">${{ number_format($product->price, 2) }}</span>
-                    @else
-                        <span class="text-sm font-semibold text-gray-900">${{ number_format($product->price, 2) }}</span>
-                    @endif
-                </div>
-            </a>
+            @include('baxin-modern::components.product-card', ['product' => $product])
         @endforeach
     </div>
 </section>
@@ -155,33 +137,7 @@
     </div>
     <div class="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-5 gap-3">
         @foreach($flashDeals as $product)
-            @php
-                $price = $product->price;
-                $special = $product->special_price;
-                $discount = $special ? round((($price - $special) / $price) * 100) : 0;
-            @endphp
-            <a href="{{ route('shop.product_or_category.index', $product->url_key) }}"
-                class="bg-white border border-gray-100 rounded-xl p-3 hover:shadow-md hover:-translate-y-0.5 transition-all group relative no-underline">
-                @if($discount > 0)
-                    <div class="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded">-{{ $discount }}%</div>
-                @endif
-                <div class="aspect-square bg-gray-50 rounded-lg mb-3 overflow-hidden">
-                    @if($product->image_url)
-                        <img src="{{ $product->image_url }}" alt="{{ $product->name }}" class="w-full h-full object-contain group-hover:scale-105 transition-transform" loading="lazy" />
-                    @else
-                        <div class="flex items-center justify-center h-full text-3xl text-gray-200">📦</div>
-                    @endif
-                </div>
-                <p class="text-xs text-gray-700 line-clamp-2 mb-2">{{ $product->name }}</p>
-                <div class="flex items-center gap-1.5">
-                    <span class="text-sm font-semibold text-red-500">${{ number_format($special, 2) }}</span>
-                    <span class="text-xs text-gray-400 line-through">${{ number_format($price, 2) }}</span>
-                </div>
-                <div class="mt-2 bg-gray-100 rounded-full h-1.5">
-                    <div class="bg-red-400 h-1.5 rounded-full" style="width: {{ rand(30, 85) }}%"></div>
-                </div>
-                <p class="text-xs text-gray-400 mt-1">Almost gone</p>
-            </a>
+            @include('baxin-modern::components.product-card', ['product' => $product, 'showBadge' => true])
         @endforeach
     </div>
 </section>

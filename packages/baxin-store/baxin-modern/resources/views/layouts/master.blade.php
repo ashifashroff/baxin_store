@@ -58,5 +58,65 @@
 
     <!-- Baxin Modern Custom Overrides -->
     <link rel="stylesheet" href="https://baxin.store/themes/baxin-modern/assets/css/app.css">
+<script>
+function quickAddToCart(productId) {
+    fetch('{{ route("shop.api.checkout.cart.store") }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({ product_id: productId, quantity: 1 })
+    })
+    .then(res => res.json())
+    .then(data => {
+        if (data.message) {
+            showToast('✅ Added to cart!', 'success');
+            updateCartCount();
+        }
+    })
+    .catch(() => showToast('❌ Could not add to cart', 'error'));
+}
+
+function addToWishlist(productId) {
+    fetch('{{ route("shop.api.customers.account.wishlist.store") }}', {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRF-TOKEN': '{{ csrf_token() }}'
+        },
+        body: JSON.stringify({ product_id: productId })
+    })
+    .then(res => res.json())
+    .then(() => showToast('❤️ Added to wishlist!', 'success'))
+    .catch(() => showToast('Sign in to save items', 'info'));
+}
+
+function updateCartCount() {
+    fetch('{{ route("shop.api.checkout.cart.index") }}')
+    .then(res => res.json())
+    .then(data => {
+        const badge = document.querySelector('.cart-count-badge');
+        if (badge) badge.textContent = data.data?.items_count ?? 0;
+    });
+}
+
+function showToast(message, type = 'success') {
+    const colors = {
+        success: 'bg-gray-900 text-white',
+        error: 'bg-red-500 text-white',
+        info: 'bg-blue-500 text-white',
+    };
+    const toast = document.createElement('div');
+    toast.className = `fixed bottom-6 left-1/2 -translate-x-1/2 z-50 px-5 py-3 rounded-full text-sm font-medium shadow-lg transition-all ${colors[type]}`;
+    toast.textContent = message;
+    document.body.appendChild(toast);
+    setTimeout(() => toast.remove(), 3000);
+}
+</script>
+
+{{-- Toast container --}}
+<div id="toast-container" class="fixed bottom-6 left-1/2 -translate-x-1/2 z-50 flex flex-col gap-2 pointer-events-none"></div>
+
 </body>
 </html>
