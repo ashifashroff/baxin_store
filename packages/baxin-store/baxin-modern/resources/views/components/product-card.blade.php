@@ -2,6 +2,10 @@
     Usage:
     @include('baxin-modern::components.product-card', ['product' => $product])
 
+    Works with both Eloquent models and stdClass (flat) objects from DB queries.
+    stdClass props: id, name, url_key, price, special_price, image_url
+    Eloquent props: uses getTypeInstance(), base_image, etc.
+
     Optional props:
     - $showBadge (bool) — show New/Sale badge, default true
     - $showRating (bool) — show star rating, default true
@@ -9,18 +13,24 @@
 --}}
 
 @php
-    $price = $product->getTypeInstance()->getMinimalPrice();
-    $special = $product->special_price;
+    $isEloquent = $product instanceof \Illuminate\Database\Eloquent\Model;
+    if ($isEloquent) {
+        $price = $product->getTypeInstance()->getMinimalPrice();
+        $special = $product->special_price;
+        $image = $product->base_image->small_image_url ?? asset('themes/baxin-modern/images/placeholder.png');
+    } else {
+        $price = $product->price;
+        $special = $product->special_price ?? null;
+        $image = $product->image_url ?? asset('themes/baxin-modern/images/placeholder.png');
+    }
     $discount = $special ? round((($price - $special) / $price) * 100) : 0;
-    $image = $product->base_image->small_image_url
-        ?? asset('themes/baxin-modern/images/placeholder.png');
     $showBadge = $showBadge ?? true;
     $showRating = $showRating ?? true;
     $showWishlist = $showWishlist ?? true;
 @endphp
 
 <a href="{{ route('shop.product_or_category.index', $product->url_key) }}"
-   class="group relative bg-white border border-gray-100 rounded-xl p-3 flex flex-col hover:shadow-md hover:-translate-y-0.5 transition-all duration-200">
+   class="group relative bg-white border border-gray-100 rounded-xl p-3 flex flex-col hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 no-underline">
 
     {{-- Wishlist button --}}
     @if($showWishlist)
@@ -32,10 +42,14 @@
 
     {{-- Image --}}
     <div class="aspect-square bg-gray-50 rounded-lg overflow-hidden mb-3 relative">
-        <img src="{{ $image }}"
-             alt="{{ $product->name }}"
-             loading="lazy"
-             class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
+        @if($image)
+            <img src="{{ $image }}"
+                 alt="{{ $product->name }}"
+                 loading="lazy"
+                 class="w-full h-full object-contain group-hover:scale-105 transition-transform duration-300" />
+        @else
+            <div class="flex items-center justify-center h-full text-3xl text-gray-200">📦</div>
+        @endif
 
         {{-- Badges --}}
         @if($showBadge)
@@ -43,7 +57,7 @@
                 <span class="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded">
                     -{{ $discount }}%
                 </span>
-            @elseif($product->new)
+            @elseif($isEloquent && $product->new)
                 <span class="absolute top-2 left-2 bg-green-500 text-white text-xs font-medium px-2 py-0.5 rounded">
                     New
                 </span>
@@ -58,7 +72,7 @@
     </p>
 
     {{-- Rating --}}
-    @if($showRating && ($product->reviews_count ?? 0) > 0)
+    @if($showRating && $isEloquent && ($product->reviews_count ?? 0) > 0)
         <div class="flex items-center gap-1 mb-1.5">
             <div class="flex text-yellow-400 text-xs">
                 @for($i = 1; $i <= 5; $i++)
