@@ -32,10 +32,11 @@
 <a href="{{ route('shop.product_or_category.index', $product->url_key) }}"
    class="group relative bg-white border border-gray-100 rounded-xl p-3 flex flex-col hover:shadow-md hover:-translate-y-0.5 transition-all duration-200 no-underline">
 
-    {{-- Wishlist button --}}
+    {{-- Wishlist button — 44px touch target --}}
     @if($showWishlist)
         <button onclick="event.preventDefault(); addToWishlist({{ $product->id }})"
-                class="absolute top-3 right-3 w-7 h-7 bg-white border border-gray-100 rounded-full flex items-center justify-center text-gray-300 hover:text-red-400 hover:border-red-200 transition opacity-0 group-hover:opacity-100 z-10 shadow-sm text-sm">
+                aria-label="Add to wishlist"
+                class="absolute top-2 right-2 w-11 h-11 bg-white border border-gray-100 rounded-full flex items-center justify-center text-gray-300 hover:text-red-400 hover:border-red-200 transition opacity-0 group-hover:opacity-100 sm:opacity-0 sm:group-hover:opacity-100 opacity-100 z-10 shadow-sm text-base">
             ♡
         </button>
     @endif
@@ -93,9 +94,9 @@
         @endif
     </div>
 
-    {{-- Add to cart quick button --}}
+    {{-- Add to cart — always visible on mobile, hover on desktop --}}
     <button onclick="event.preventDefault(); quickAddToCart({{ $product->id }})"
-            class="mt-2.5 w-full bg-blue-600 text-white text-xs font-medium py-2 rounded-full hover:bg-blue-700 transition opacity-0 group-hover:opacity-100">
+            class="mt-2.5 w-full bg-blue-600 text-white text-xs font-medium py-2.5 rounded-full hover:bg-blue-700 transition sm:opacity-0 sm:group-hover:opacity-100">
         Add to Cart
     </button>
 
