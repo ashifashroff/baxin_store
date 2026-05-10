@@ -2,28 +2,36 @@
     Usage:
     @include('baxin-modern::components.product-card', ['product' => $product])
 
-    Works with both Eloquent models and stdClass (flat) objects from DB queries.
-    stdClass props: id, name, url_key, price, special_price, image_url
-    Eloquent props: uses getTypeInstance(), base_image, etc.
-
-    Optional props:
-    - $showBadge (bool) — show New/Sale badge, default true
-    - $showRating (bool) — show star rating, default true
-    - $showWishlist (bool) — show wishlist button, default true
+    Works with:
+    - stdClass (from HomeComposer DB queries): id, name, url_key, price, special_price, image_url
+    - ProductFlat Eloquent (from category pages): id, name, url_key, price, special_price
+    - Product Eloquent: uses getTypeInstance(), base_image, etc.
 --}}
 
 @php
-    $isEloquent = $product instanceof \Illuminate\Database\Eloquent\Model;
-    if ($isEloquent) {
+    $isProductModel = $product instanceof \Webkul\Product\Models\Product;
+    $isFlatModel = $product instanceof \Webkul\Product\Models\ProductFlat;
+    $isStdClass = !$isProductModel && !$isFlatModel;
+
+    if ($isProductModel) {
         $price = $product->getTypeInstance()->getMinimalPrice();
         $special = $product->special_price;
         $image = $product->base_image->small_image_url ?? asset('themes/baxin-modern/images/placeholder.png');
     } else {
+        // ProductFlat or stdClass — both have flat price/image props
         $price = $product->price;
         $special = $product->special_price ?? null;
-        $image = $product->image_url ?? asset('themes/baxin-modern/images/placeholder.png');
+        if ($isFlatModel) {
+            $imgPath = \Illuminate\Support\Facades\DB::table('product_images')
+                ->where('product_id', $product->id)
+                ->orderBy('id')
+                ->value('path');
+            $image = $imgPath ? 'https://baxin.store/cache/medium/' . $imgPath : ($product->image_url ?? '');
+        } else {
+            $image = $product->image_url ?? '';
+        }
     }
-    $discount = $special ? round((($price - $special) / $price) * 100) : 0;
+    $discount = ($special && $price > 0) ? round((($price - $special) / $price) * 100) : 0;
     $showBadge = $showBadge ?? true;
     $showRating = $showRating ?? true;
     $showWishlist = $showWishlist ?? true;
@@ -36,7 +44,7 @@
     @if($showWishlist)
         <button onclick="event.preventDefault(); addToWishlist({{ $product->id }})"
                 aria-label="Add to wishlist"
-                class="absolute top-2 right-2 w-11 h-11 bg-white border border-gray-100 rounded-full flex items-center justify-center text-gray-300 hover:text-red-400 hover:border-red-200 transition opacity-0 group-hover:opacity-100 sm:opacity-0 sm:group-hover:opacity-100 opacity-100 z-10 shadow-sm text-base">
+                class="absolute top-2 right-2 w-11 h-11 bg-white border border-gray-100 rounded-full flex items-center justify-center text-gray-300 hover:text-red-400 hover:border-red-200 transition sm:opacity-0 sm:group-hover:opacity-100 opacity-100 z-10 shadow-sm text-base">
             ♡
         </button>
     @endif
@@ -58,7 +66,7 @@
                 <span class="absolute top-2 left-2 bg-red-500 text-white text-xs font-bold px-2 py-0.5 rounded">
                     -{{ $discount }}%
                 </span>
-            @elseif($isEloquent && $product->new)
+            @elseif($isProductModel && $product->new)
                 <span class="absolute top-2 left-2 bg-green-500 text-white text-xs font-medium px-2 py-0.5 rounded">
                     New
                 </span>
@@ -73,7 +81,7 @@
     </p>
 
     {{-- Rating --}}
-    @if($showRating && $isEloquent && ($product->reviews_count ?? 0) > 0)
+    @if($showRating && $isProductModel && ($product->reviews_count ?? 0) > 0)
         <div class="flex items-center gap-1 mb-1.5">
             <div class="flex text-yellow-400 text-xs">
                 @for($i = 1; $i <= 5; $i++)
