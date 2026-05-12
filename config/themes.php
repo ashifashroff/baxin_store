@@ -1,7 +1,7 @@
 <?php
 
 return [
-    'shop-default' => 'baxin-modern',
+    'shop-default' => 'baxin-banggood',
 
     'shop' => [
         'default' => [
@@ -37,6 +37,17 @@ return [
             ],
         ],
     ],
+
+        'baxin-banggood' => [
+            'name' => 'Baxin Banggood',
+            'assets_path' => 'public/themes/baxin-banggood/assets',
+            'views_path' => 'packages/baxin-store/baxin-banggood/resources/views',
+            'vite' => [
+                'hot_file' => 'themes/baxin-banggood/vite.hot',
+                'build_directory' => 'themes/baxin-banggood/build',
+                'package_assets_directory' => 'resources/assets',
+            ],
+        ],
 
     'admin-default' => 'default',
 

@@ -1,0 +1,18 @@
+{
+    "name": "baxin-store/baxin-banggood",
+    "description": "Baxin Banggood-Inspired Theme for Bagisto",
+    "type": "library",
+    "require": {},
+    "autoload": {
+        "psr-4": {
+            "BaxinStore\\BaxinBanggood\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "BaxinStore\\BaxinBanggood\\BaxinBanggoodServiceProvider"
+            ]
+        }
+    }
+}

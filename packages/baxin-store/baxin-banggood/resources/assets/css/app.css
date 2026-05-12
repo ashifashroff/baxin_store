@@ -1,0 +1,43 @@
+/* Baxin Banggood Theme — App CSS */
+
+/* Base resets for Tailwind preflight:false compatibility */
+a { text-decoration: none; }
+img { max-width: 100%; height: auto; }
+
+/* Smooth scrolling */
+html { scroll-behavior: smooth; }
+
+/* Marquee animation */
+@keyframes marquee {
+    0% { transform: translateX(0); }
+    100% { transform: translateX(-50%); }
+}
+.animate-marquee {
+    animation: marquee 25s linear infinite;
+}
+
+/* Reduced motion */
+@media (prefers-reduced-motion: reduce) {
+    .animate-marquee { animation: none; }
+    * { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; }
+}
+
+/* Product card line clamp */
+.line-clamp-2 {
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+/* Flash deal timer tabular nums */
+.flash-timer { font-variant-numeric: tabular-nums; }
+
+/* Custom scrollbar */
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: #f1f5f9; }
+::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 3px; }
+::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+
+/* Bagisto Vue component overrides */
+#app .bagisto-card { border-radius: 0.75rem; border: 1px solid #f1f5f9; }
